@@ -1,0 +1,21 @@
+{
+  "name": "nodejs-demo",
+  "version": "1.0.0",
+  "description": "nodejs demo",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "nodejs",
+    "seniverse",
+    "v4",
+    "demo"
+  ],
+  "author": "Anthony Tang",
+  "license": "ISC",
+  "dependencies": {
+    "got": "^11.8.2",
+    "query-string": "^7.0.0"
+  }
+}

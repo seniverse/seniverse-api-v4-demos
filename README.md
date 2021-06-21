@@ -10,6 +10,9 @@
 - [Python](./python)
 
   - [使用签名验证方式](./python/demo-jsonp.py)
+    
+- [Node.js](./nodejs))
+  - [v4 版本接口示例](./nodejs/index.js)
 
 
 **注意**：所有代码示例仅做开发参考使用，不要在生产环境下暴露 key！生产环境下请通过后端进行签名验证。
