@@ -1,4 +1,4 @@
-golang v4 demo
+golang demo
 ===========
 # 如何开始
 - 如果您的 golang 版本低于 1.16, 需要开启 GO111MODULE
