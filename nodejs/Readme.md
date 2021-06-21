@@ -1,4 +1,4 @@
-Node.js v4 demo
+Node.js demo
 ========
 # 如何开始
 - npm i
