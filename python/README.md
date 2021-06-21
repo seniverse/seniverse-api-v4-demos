@@ -60,20 +60,9 @@ response = request.urlopen(req, context=gcontext).read().decode('UTF-8')
 
 ```bash
 $ cd python
-$ ls # should has demo-requests.py, demo-urllib.py...
-
-# 获取默认地址实况天气（北京）
-$ python3 demo-requests.py
-$ python3 demo-urllib.py
-# 获取厦门实况天气
-$ python3 demo-requests.py xiamen
-$ python3 demo-requests.py 厦门
-$ python3 demo-urllib.py xiamen
-$ python3 demo-urllib.py 厦门
 
 # 获取 jsonp url
-$ python3 demo-jsonp.py # 北京
-$ python3 demo-requests.py xiamen # 厦门
+$ python3 demo-jsonp.py 
 ```
 
 ## 参数说明
