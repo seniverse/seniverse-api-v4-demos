@@ -16,9 +16,11 @@
 - [Golang](./golang)
     - [v4 版本接口示例](./golang/main.go)
 
-- [Java](./golang)
-    - [v4 版本接口示例](./java/src/Example.java)
+- [Java 16](./java)
+    - [Java 16 v4 版本接口示例](./java/src/Example.java)
 
+- [Java 1.8](./java1.8)
+    - [Java 1.8 v4 版本接口示例](./java1.8/src/Example.java)
 
 **注意**：所有代码示例仅做开发参考使用，不要在生产环境下暴露 key！生产环境下请通过后端进行签名验证。
 
