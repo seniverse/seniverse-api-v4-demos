@@ -23,12 +23,11 @@ def fetchWeather():
     signature = base64.encodestring(digester).rstrip()
     sig = signature.decode('utf8')
 
-    result = requests.get(API, params={
-        'fields': 'weather_hourly_1h',
-        'locations': '36:118',
-        'public_key': UID,
-        'ts': ts,
-        'sig': sig },timeout=1)
+    apiparams = dict()
+    for i in sorted(params.split('&')):
+        apiparams[i.split('=')[0]] =  i.split('=')[1]
+    apiparams['sig'] = sig
+    result = requests.get(API, params=apiparams, timeout=1)
 
     return result.json()
 
