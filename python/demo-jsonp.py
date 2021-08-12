@@ -1,35 +1,37 @@
-import base64
-import time
-import hmac
+from urllib.parse import urlencode
+from urllib.request import urlopen
 import hashlib
+import hmac
+from base64 import b64encode
 import json
-import requests
+import time
+from urllib.error import HTTPError
+from pprint import pprint
+import logging
+import os
+import sys
+logger = logging.getLogger(__name__)
 
-KEY = '4r9bergjetiv1tsd'  # API key
-UID = "U785B76FC9"  # 用户ID
-API = 'https://api.seniverse.com/v4'
+def fetch_weather(public_key, secret_key, **params):
+    params['public_key'] = public_key
+    params.setdefault('ts', str(int(time.time())))
+    query = "&".join(f"{key}={value}" for key, value in sorted(params.items())).encode()
+    params['sig'] = b64encode(hmac.new(secret_key.encode(), query, hashlib.sha1).digest()).decode()
+    try:
+        response = urlopen("https://api.seniverse.com/v4?" + urlencode(params))
+    except HTTPError as e:
+        error = e.fp.read().decode()
+        logger.exception(error)
+        raise
+    return json.load(response)
 
-def fetchWeather():
-    ts = int(time.time())
-    # V4 API 的请求参数，可替换为其他
-    params = "locations=36:118&fields=weather_hourly_1h&public_key={uid}&ts={ts}".format(ts=ts, uid=UID)
-    str = '&'
-    params = str.join(sorted(params.split('&'))) #请求参数需要按字母顺序排列
+def main(argv):
+    argv = argv or ["locations=36:118", "fields=weather_hourly_1h"]
+    params = dict(arg.split("=", 1) for arg in argv)
+    result = fetch_weather(PUBLIC_KEY, PRIVATE_KEY, **params)
+    pprint(result)
     
-    key = bytes(KEY, 'UTF-8')
-    raw = bytes(params, 'UTF-8')
-
-    digester = hmac.new(key, raw, hashlib.sha1).digest()
-    signature = base64.encodestring(digester).rstrip()
-    sig = signature.decode('utf8')
-
-    apiparams = dict()
-    for i in sorted(params.split('&')):
-        apiparams[i.split('=')[0]] =  i.split('=')[1]
-    apiparams['sig'] = sig
-    result = requests.get(API, params=apiparams, timeout=1)
-
-    return result.json()
-
+PUBLIC_KEY = 'P8itVvN3qWEhoSor'
+PRIVATE_KEY = 'SgSn6OPU_0MDadrDi'
 if __name__ == '__main__':
-    results = fetchWeather() #返回json格式数据
+    main(sys.argv[1:])
