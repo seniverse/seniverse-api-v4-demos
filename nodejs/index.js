@@ -24,7 +24,7 @@ function signature(urlString, paramsObj) {
   return result;
 }
 
-async function main() {
+async function precipMinutely() {
   const ts = Math.round(Date.now() / 1000);
   const ttl = 600;
   const latitude = 29.5617;
@@ -47,6 +47,31 @@ async function main() {
   console.log('success:', JSON.stringify(rsp.body));
 }
 
-main();
+
+async function typhoonList() {
+  const ts = Math.round(Date.now() / 1000);
+  const ttl = 600;
+
+  let url = 'https://api.seniverse.com/v4?fields=typhoon_list';
+  const query = signature(url, {
+    ttl, ts,
+    public_key: publicKey,
+    year: 2021,
+    active: 1,
+  });
+
+  const rsp = await got.get(url, {
+    responseType: 'json',
+    searchParams: query
+  }).catch(err => {
+    console.log(err);
+  });
+
+  console.log('success:', JSON.stringify(rsp.body));
+}
+
+
+// precipMinutely();
+typhoonList();
 
 

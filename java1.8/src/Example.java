@@ -1,17 +1,8 @@
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import javax.crypto.CipherInputStream;
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
-import javax.crypto.spec.IvParameterSpec;
 import java.util.Date;
-import javax.crypto.Mac;
-import java.util.Base64;
-import java.util.Objects;
-import java.net.URLEncoder;
 
 public class Example {
 
@@ -19,31 +10,37 @@ public class Example {
         String publicKey = "XXX";
         String secretKey = "XXX";
 
-        String query = "fields=precip_minutely&locations=29.5617:120.0962&public_key=".concat(publicKey).concat("&ts=").concat(Long.toString(new Date().getTime() / 1000));
-        Mac hmac = Mac.getInstance("HmacSHA1");
-        hmac.init(new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), "HmacSHA1"));
-        String sig = Base64.getEncoder().encodeToString(hmac.doFinal(query.getBytes(StandardCharsets.UTF_8)));
-        // String signed = query.concat("&sig=").concat(URLEncoder.encode(sig, "UTF-8"));
+        SeniverseUtils seniverseUtils = new SeniverseUtils();
 
-        URL url = new URL("https://api.seniverse.com/v4?".concat(query));
-        URLConnection conn = url.openConnection();
+        seniverseUtils.addParameter("ts", new Date().getTime() / 1000);
+        seniverseUtils.addParameter("fields", "precip_minutely");
+        seniverseUtils.addParameter("public_key", publicKey);
+        seniverseUtils.addParameter("locations", "29.5617:120.0962");
 
-        conn.setRequestProperty("Sig", sig);
+        try {
+            String urlStr = seniverseUtils.getUrl("https://api.seniverse.com/v4", secretKey);
 
-        InputStream stream = conn.getInputStream();
-        ByteArrayOutputStream outSteam = new ByteArrayOutputStream();
+            URL url = new URL(urlStr);
 
-        byte[] buffer = new byte[1024];
-        int len = -1;
-        while ((len = stream.read(buffer)) != -1) {
-            outSteam.write(buffer, 0, len);
+            URLConnection conn = url.openConnection();
+
+            InputStream stream = conn.getInputStream();
+            ByteArrayOutputStream outSteam = new ByteArrayOutputStream();
+
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = stream.read(buffer)) != -1) {
+                outSteam.write(buffer, 0, len);
+            }
+            outSteam.close();
+            stream.close();
+            String result = outSteam.toString();
+
+            System.out.println("");
+            System.out.println("url: ".concat(urlStr));
+            System.out.println(result);
+        } catch (Error error) {
+            System.err.println(error.getMessage());
         }
-        outSteam.close();
-        stream.close();
-        String result = outSteam.toString();
-
-        System.err.println("");
-        System.err.println("Query: ".concat(query));
-        System.err.println(result);
     }
 }
