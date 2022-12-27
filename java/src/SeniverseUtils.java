@@ -1,5 +1,7 @@
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -20,7 +22,7 @@ public class SeniverseUtils {
         this.paramMap.remove(key);
     }
 
-    public String getUrl(String baseUrl, String secretKey) throws NoSuchAlgorithmException, InvalidKeyException {
+    public String getUrl(String baseUrl, String secretKey) throws NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException {
         Set<String> paramSet = this.paramMap.keySet();
 
         List<String> paramList = new ArrayList<>(paramSet);
@@ -28,16 +30,22 @@ public class SeniverseUtils {
         paramList.sort(Comparator.naturalOrder());
         boolean isFirst = true;
         StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder encodeStringBuilder = new StringBuilder();
 
         for (String key : paramList) {
             if (isFirst) {
                 isFirst = false;
             } else {
                 stringBuilder.append("&");
+                encodeStringBuilder.append("&");
             }
             stringBuilder.append(key);
             stringBuilder.append("=");
             stringBuilder.append(this.paramMap.get(key));
+
+            encodeStringBuilder.append(key);
+            encodeStringBuilder.append("=");
+            encodeStringBuilder.append(URLEncoder.encode(this.paramMap.get(key), "UTF-8"));
         }
 
         String query = stringBuilder.toString();
@@ -49,6 +57,13 @@ public class SeniverseUtils {
 
         stringBuilder.append("&sig=");
         stringBuilder.append(sig);
+
+        encodeStringBuilder.append("&sig=");
+        encodeStringBuilder.append(URLEncoder.encode(sig, "UTF-8"));
+
+        String encodeUlr = baseUrl.concat("?").concat(encodeStringBuilder.toString());
+        System.out.println("浏览器访问链接: ");
+        System.out.println(encodeUlr);
 
         return baseUrl.concat("?").concat(stringBuilder.toString());
     }

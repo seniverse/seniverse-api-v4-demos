@@ -14,12 +14,16 @@ function signature(urlString, paramsObj) {
   const obj = url.parse(urlString, true, true);
   const params = Object.assign({}, paramsObj, obj.query);
   let result = querystring.stringify(params, { encode: false });
+  let encodeResult = querystring.stringify(params, { encode: true });
+
   const sig = crypto
     .createHmac('sha1', secret)
     .update(result, 'utf8')
     .digest('base64');
 
   result += `&sig=${encodeURIComponent(sig)}`;
+  encodeResult += `&sig=${encodeURIComponent(sig)}`;
+  console.log('浏览器访问链接: ', `${obj.protocol}//${obj.host}${obj.pathname}?${encodeResult}`);
 
   return result;
 }
@@ -44,6 +48,8 @@ async function precipMinutely() {
     console.log(err);
   });
 
+  console.log('url', url);
+  console.log('query', query);
   console.log('success:', JSON.stringify(rsp.body));
 }
 
@@ -71,7 +77,7 @@ async function typhoonList() {
 }
 
 
-// precipMinutely();
-typhoonList();
+precipMinutely();
+// typhoonList();
 
 
